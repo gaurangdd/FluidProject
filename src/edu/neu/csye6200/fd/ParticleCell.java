@@ -11,6 +11,7 @@ public static final int DIR_2 = 0b000100; //  4 - Up/Right vector
 public static final int DIR_3 = 0b001000; //  8 - Right vector
 public static final int DIR_4 = 0b010000; // 16 - Down/Right vector
 public static final int DIR_5 = 0b100000; // 32 - Down/Left vector
+//public static final int DIR_6 = 0b1000000; //64
 
 /**
 * Determine if a cellValue has a particle moving in a particular direction
@@ -28,6 +29,7 @@ case 2: return ((cellVal & DIR_2) > 0);
 case 3: return ((cellVal & DIR_3) > 0);
 case 4: return ((cellVal & DIR_4) > 0);
 case 5: return ((cellVal & DIR_5) > 0);
+//case 6: return ((cellVal & DIR_6) > 0);
 }
 }
 
@@ -47,6 +49,7 @@ case 2: cellVal = setDirectionFlag(cellVal, DIR_2); break;
 case 3: cellVal = setDirectionFlag(cellVal, DIR_3); break;
 case 4: cellVal = setDirectionFlag(cellVal, DIR_4); break;
 case 5: cellVal = setDirectionFlag(cellVal, DIR_5); break;
+//case 6: cellVal = setDirectionFlag(cellVal, DIR_6); break;
 }
 return cellVal;
 }
@@ -58,6 +61,7 @@ return cellVal;
 * @return the current cell with a new particle overlay
 */
 public static int setDirectionFlag(int cellVal, int directionFlag) {
+	//if (directionFlag == 64) return directionFlag;
 cellVal |= directionFlag; // Turn on the corresponding bits
 return cellVal; // return the result
 }

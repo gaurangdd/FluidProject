@@ -18,7 +18,7 @@ public class BasicRule extends RuleA {
 
 
 	@Override
-	public int createNextCell(int inVal) {
+	public int createNextCell(int x, int y,int inVal) {
 		
 		int outdir = 0;
 		for (int i = 0; i < 6; i++) {

@@ -9,13 +9,11 @@ import edu.neu.csye6200.fd.RuleI;
 
 public class FluidFrameSim {
 	
-	
-	
 	private boolean done = false; // Set true to exit (i.e. stop) the simulation
 	//private boolean paused = false; // Set true to pause the simulation
 	
-	private int MAX_FRAME_SIZE = 32; // How big is the simulation frame
-	private int MAX_GENERATION = 2; // How many generations will we calculate before we're through?
+	private int MAX_FRAME_SIZE = 8; // How big is the simulation frame
+	private int MAX_GENERATION = 4; // How many generations will we calculate before we're through?
 	private int genCount = 0; // the count of the most recent generation
 
 	private FluidFrame currentFrame = null;
@@ -27,7 +25,7 @@ public class FluidFrameSim {
 	 */
 	public FluidFrameSim() {
 		currentFrame = new FluidFrame(MAX_FRAME_SIZE);
-		currentFrame.addRandomParticles(0.50); // Only 20% of the cells should have a particle
+		currentFrame.addRandomParticles(0.30); // Only 20% of the cells should have a particle
 		rule = new BasicRule();
 	}
 
@@ -63,7 +61,7 @@ public class FluidFrameSim {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args)  {
 		FluidFrameSim ffSim = new FluidFrameSim();
 		ffSim.runSim(); // Perform a test run of the simulation
 		
