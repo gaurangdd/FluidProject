@@ -18,6 +18,7 @@ public class RuleA implements RuleI {
 		for (int x = 0; x < inFrame.getSize(); x++) {
 			for (int y = 0; y < inFrame.getSize(); y++) {
 				int inboundVal = inFrame.getCellInValue(x, y); // Read all neighbors and create opposite inbound values from their outbound ones
+				int inbound = createval(x,y,inboundVal,inboundVal);
 				int nextOutCelVal = createNextCell(x,y,inboundVal);
 				nxtFrame.OutValue(x, y, nextOutCelVal);
 			}
@@ -43,6 +44,13 @@ public class RuleA implements RuleI {
 
 
 			}
+		return inVal;
+	}
+
+
+	@Override
+	public int createval(int x, int y, int inVal, int a) {
+		// TODO Auto-generated method stub
 		return inVal;
 	}
 }

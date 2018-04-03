@@ -28,6 +28,21 @@ public class BasicRule extends RuleA {
 		
 		return outdir;
 	}
+	
+	public int createval (int x, int y, int inVal, int a) {
+		if (a == 0 || a == 1 || a == 2 || a == 4 || a == 8 || a == 16 || a == 32) {
+			return inVal;
+		}
+		else
+		inVal = 0;
+		for (int dir = 0 ; dir < 6 ; dir ++) {
+			if (ParticleCell.hasDirectionFlag(a, dir))
+				inVal = ParticleCell.setFlag(inVal, ParticleCell.getOppositeDirection(dir));
+					
+		}
+		return inVal;
+	}
+	
 
 }
 

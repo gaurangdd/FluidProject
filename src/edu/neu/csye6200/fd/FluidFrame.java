@@ -99,7 +99,7 @@ public class FluidFrame {
 		// Walk through each direction
 		for (int dir = 0; dir < 6; dir++) {
 			// Get the cell in a given direction from our current cell
-			if(x-1<0 || y-1<0 || x+1>=size || y+1>=size || x-1 > 5){                            
+			if(x-1<0 || y-1<0 || x+1>=size || y+1>=size ){                            
 
 				if(ParticleCell.hasDirectionFlag(getCellOutValue(x,y), dir) && isPointingOutside(x,y,dir)){
 
@@ -272,12 +272,12 @@ public class FluidFrame {
 			for (int x = 0; x < getSize(); x++) {
 
 				int cel = getCellOutValue(x, y);
-				if (ParticleCell.hasDirectionFlag(cel, 0)) dispChar = '0';
-				else if (ParticleCell.hasDirectionFlag(cel, 1)) dispChar = '1';
-				else if (ParticleCell.hasDirectionFlag(cel, 2)) dispChar = '2';
-				else if (ParticleCell.hasDirectionFlag(cel, 3)) dispChar = '3';
-				else if (ParticleCell.hasDirectionFlag(cel, 4)) dispChar = '4';
-				else if (ParticleCell.hasDirectionFlag(cel, 5)) dispChar = '5';
+				if (ParticleCell.hasDirectionFlag(cel, 0)) dispChar = '\u2190';
+				else if (ParticleCell.hasDirectionFlag(cel, 1)) dispChar = '\u2196';
+				else if (ParticleCell.hasDirectionFlag(cel, 2)) dispChar = '\u2197';
+				else if (ParticleCell.hasDirectionFlag(cel, 3)) dispChar = '\u2192';
+				else if (ParticleCell.hasDirectionFlag(cel, 4)) dispChar = '\u2198';
+				else if (ParticleCell.hasDirectionFlag(cel, 5)) dispChar = '\u2199';
 				//else if (ParticleCell.hasDirectionFlag(cel, 6)) dispChar = '6';
 				else dispChar = '-';
 
@@ -286,9 +286,68 @@ public class FluidFrame {
 			System.out.println(""); // Carriage return
 		}
 	}
-
+	
+	private double avgDirection;
+	private double avgMagnitude;
+	
+public void CalcAvgRegion(int yBegin, int xBegin , int stepsize) {
+		
+		double Sumx = 0.0;
+		double Sumy = 0.0;
+		
+		int xEnd = xBegin + stepsize;
+		int yEnd = yBegin + stepsize;
+		
+		for (int y=yBegin ; y<yEnd ; y++) {
+			for (int x=xBegin ; x<xEnd ; x++) {
+				int cellval = getCellInValue(x,y);
+				if (ParticleCell.hasDirectionFlag(cellval,0)) {
+					Sumx += -1.0;
+				}
+				if (ParticleCell.hasDirectionFlag(cellval,1)) {
+					Sumx += -0.5;
+					Sumy += -0.87;
+				}
+				if (ParticleCell.hasDirectionFlag(cellval,2)) {
+					Sumx += 0.5;
+					Sumy += -0.87;
+				}
+				if (ParticleCell.hasDirectionFlag(cellval,3)) {
+					Sumx += 1.0;
+				}
+				if (ParticleCell.hasDirectionFlag(cellval,4)) {
+					Sumx += 0.5;
+					Sumy += 0.87;
+				}
+				if (ParticleCell.hasDirectionFlag(cellval,5)) {
+					Sumx += -0.5;
+					Sumy += 0.87;
+				}
+			}
+		}
+		
+		double divisor = stepsize * stepsize * 3.0;
+		
+		double avgx = Sumx / divisor;
+		double avgy = Sumy / divisor;
+		
+		avgMagnitude = Math.sqrt(avgx * avgx + avgx * avgx);
+		avgDirection = Math.atan(avgx/avgy);
+}
+		
+		public double getAvgDirection() {
+			return avgDirection;
+		}
+	
+		public double getAvgMagnitude() {
+			return avgMagnitude;
+		}
 
 
 }
+
+
+
+
 
 

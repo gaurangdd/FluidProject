@@ -2,39 +2,44 @@ package edu.neu.csye6200.fd;
 
 
 
+import java.util.Observable;
+
 import edu.neu.csye6200.fd.BasicRule;
 import edu.neu.csye6200.fd.FluidFrame;
 import edu.neu.csye6200.fd.FluidFrameSim;
 import edu.neu.csye6200.fd.RuleI;
 
-public class FluidFrameSim {
+public class FluidFrameSim extends Observable implements Runnable {
 	
 	private boolean done = false; // Set true to exit (i.e. stop) the simulation
-	//private boolean paused = false; // Set true to pause the simulation
+	private boolean paused = false; // Set true to pause the simulation
+	private boolean running = false;
 	
-	private int MAX_FRAME_SIZE = 8; // How big is the simulation frame
-	private int MAX_GENERATION = 4; // How many generations will we calculate before we're through?
+	private int MAX_FRAME_SIZE = 32; // How big is the simulation frame
+	private int MAX_GENERATION = 5; // How many generations will we calculate before we're through?
 	private int genCount = 0; // the count of the most recent generation
 
 	private FluidFrame currentFrame = null;
-	
+	private FluidFrameAvg avgFrame = null;
 	private RuleI rule = null;
+	
+	
 	
 	/**
 	 * 
 	 */
 	public FluidFrameSim() {
 		currentFrame = new FluidFrame(MAX_FRAME_SIZE);
-		currentFrame.addRandomParticles(0.30); // Only 20% of the cells should have a particle
+		currentFrame.addRandomParticles(0.50); // Only 20% of the cells should have a particle
+		avgFrame = new FluidFrameAvg(MAX_FRAME_SIZE/10);
 		rule = new BasicRule();
 	}
 
 	public void runSim() {
 		
-		System.out.println("FluidFrame: 0" );
-		currentFrame.drawFrameToConsole();
 		
-		while(!done) {
+		
+		
 			
 			// Move target if needed
 			
@@ -43,8 +48,12 @@ public class FluidFrameSim {
 			// Average the results to create a lower-res display frame
 			
 			// Store the low-res picture and make it available for display
+			avgFrame.setFluidFrame(nextFrame);
 			
 			// Advertise that we have a display displayable average FluidFrame and let it be drawn
+			setChanged();
+			notifyObservers(avgFrame);
+			
 			
 			genCount++; // Keep track of how many frames have been calculated
 			System.out.println("\nFluidFrame: " + genCount);
@@ -52,10 +61,13 @@ public class FluidFrameSim {
 			
 			currentFrame = nextFrame;
 
-			if (genCount > MAX_GENERATION) done = true;
-		}
+			
+		
 		
 	}
+	
+	
+	
 	
 	
 	/**
@@ -66,6 +78,38 @@ public class FluidFrameSim {
 		ffSim.runSim(); // Perform a test run of the simulation
 		
 
+	}
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		running = true;
+		System.out.println("FluidFrame: 0" );
+		currentFrame.drawFrameToConsole();
+		
+		while(!done) {
+			
+			if (!paused) {
+				runSim();
+				sleep(300L);
+			}
+			else {
+				sleep(500L);
+			}
+			if (genCount > MAX_GENERATION) done = true;
+		}
+		running = false;
+		
+	}
+
+	private void sleep(long l) {
+		try {
+			Thread.sleep(l);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
