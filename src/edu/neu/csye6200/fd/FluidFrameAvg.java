@@ -32,6 +32,10 @@ public class FluidFrameAvg {
 		}
 
 	}
+	
+	public int getSize() {
+		return size;
+	}
 
 	private void resetArray() {
 		for (int x = 0; x<size;x++) {
