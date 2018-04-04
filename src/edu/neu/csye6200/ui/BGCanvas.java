@@ -1,5 +1,7 @@
 package edu.neu.csye6200.ui;
 
+import java.util.Observable;
+import java.util.Observer;
 import java.util.logging.Logger;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -7,23 +9,28 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
+import edu.neu.csye6200.fd.FluidFrame;
+import edu.neu.csye6200.fd.FluidFrameAvg;
+
 /**
  * A sample canvas that draws a rainbow of lines
  * @author MMUNSON
  */
-public class BGCanvas extends JPanel {
+public class BGCanvas extends JPanel implements Observer {
 
 	private static final long serialVersionUID = 1L;
 	private Logger log = Logger.getLogger(BGCanvas.class.getName());
     private int lineSize = 20;
     private Color col = null;
     private long counter = 0L;
+	private FluidFrameAvg ffa = new FluidFrameAvg(lineSize);
 	
     /**
      * CellAutCanvas constructor
      */
 	public BGCanvas() {
 		col = Color.WHITE;
+		
 	}
 
 	/**
@@ -31,7 +38,10 @@ public class BGCanvas extends JPanel {
 	 * to a user initiated call to repaint();
 	 */
 	public void paint(Graphics g) {
+		if (ffa == null)
 		drawBG(g); // Our Added-on drawing
+		else 
+			drawFD(g);
     }
 	
 	/**
@@ -78,6 +88,49 @@ public class BGCanvas extends JPanel {
 		return colorVal;
 	}
 	
+	public void drawFD(Graphics g) {
+		log.info("Drawing FD: " + counter++);
+		
+		Graphics2D g2d = (Graphics2D) g;
+		Dimension size = getSize();
+		
+		g2d.setColor(Color.BLACK);
+		g2d.fillRect(0, 0, size.width, size.height);
+		
+		g2d.setColor(Color.RED);
+		g2d.drawString("BG 2D", 10, 15);
+		
+		int maxRows = size.height / lineSize;
+		int maxCols = size.width / lineSize;
+		
+		int ffaSize = ffa.getSize();
+		if (maxRows > ffaSize) maxRows = ffaSize;
+		if (maxCols > ffaSize) maxCols = ffaSize;
+		
+		for (int j = 0; j < maxRows; j++) {
+			for (int i = 0 ; i < maxCols ; i++) {
+				int redVal = validColor(i*5);
+				   int greenVal = validColor(255-j*5);
+				   int blueVal = validColor((j*5)-(i*2));
+				   
+				   double dirVal = ffa.getAvgDirection();
+				   double magVal = ffa.getAvgMagnitude();
+				   
+				   System.out.println(">"+dirVal);
+				   
+				   col = new Color(redVal, greenVal, blueVal);
+				// Draw box, one pixel less to create a black outline
+				   int startx = i*lineSize;
+				   int starty = j*lineSize;
+				   int endx = startx + 15;
+				   int endy = starty + 15;
+				   paintLine( g2d, startx, starty, endx, endy, col); 
+				   
+			}
+			System.out.println();
+		}
+	}
+	
 
 	/**
 	 * A convenience routine to set the color and draw a line
@@ -91,6 +144,18 @@ public class BGCanvas extends JPanel {
 	private void paintLine(Graphics2D g2d, int startx, int starty, int endx, int endy, Color color) {
 		g2d.setColor(color);
 		g2d.drawLine(startx, starty, endx, endy);
+	}
+
+	@Override
+	public void update(Observable o, Object arg) {
+		System.out.println("Received an update");
+		
+		if (arg instanceof FluidFrameAvg) {
+			this.ffa = (FluidFrameAvg)arg;
+			this.repaint();
+		}
+		
+		
 	}
 	
 }

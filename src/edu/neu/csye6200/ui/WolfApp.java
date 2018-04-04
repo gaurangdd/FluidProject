@@ -3,11 +3,14 @@ package edu.neu.csye6200.ui;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+
+import edu.neu.csye6200.fd.FluidFrameSim;
 
 /**
  * A Test application for the Wolfram Biological Growth application
@@ -28,8 +31,8 @@ public class WolfApp extends FDApp {
 	//protected JButton pauseBtn;
 	
     private BGCanvas bgPanel;
-	//FluidFrameSim sim = null;
-	//Thread thread = null;
+	FluidFrameSim sim = null;
+	Thread thread = null;
     /**
      * Sample app constructor
      */
@@ -38,6 +41,9 @@ public class WolfApp extends FDApp {
 		frame.setTitle("WolfApp");
 		
 		menuMgr.createDefaultActions(); // Set up default menu items
+		
+		sim = new FluidFrameSim(); 
+		sim.addObserver(bgPanel);
 		
     	showUI(); // Cause the Swing Dispatch thread to display the JFrame
     }
@@ -67,14 +73,39 @@ public class WolfApp extends FDApp {
     	northPanel.setLayout(new FlowLayout());
     	
     	startBtn = new JButton("Start");
-    	startBtn.addActionListener(this); // Allow the app to hear about button pushes
+    	startBtn.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent ae) {
+    			startSim();
+    		}
+    	}); // Allow the app to hear about button pushes
     	northPanel.add(startBtn);
     	
     	stopBtn = new JButton("Stop"); // Allow the app to hear about button pushes
-    	stopBtn.addActionListener(this);
+    	stopBtn.addActionListener(new ActionListener() {
+    		public void actionPerformed(ActionEvent ae) {
+    			stopSim();
+    		}
+    	});
     	northPanel.add(stopBtn);
 
     	return northPanel;
+    }
+    
+    private void startSim() {
+    	if (sim.isRunning()) return;
+    	System.out.println("Strating a thread");
+    	if (thread == null)
+    		thread = new Thread(sim);
+    	
+    	thread.start();
+    	startBtn.setEnabled(false);
+    	
+    	
+    }
+    
+    private void stopSim() {
+    	System.out.println("Stop Pressed");
+    	thread.stop();
     }
     
 	@Override

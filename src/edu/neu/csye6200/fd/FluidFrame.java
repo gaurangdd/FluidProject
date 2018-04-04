@@ -250,15 +250,17 @@ public class FluidFrame {
 
 		// Add the CellOutParticle
 		addCellOutParticle(x,y,direction); // add it, or if the particle already exists, just overlay it
-		
-		//for(x = 0 ; x<3 ; x++) {
-		//	for (y = size/2; y < size; y++ ) {
-		//		direction = 6;
-		//		addCellOutParticle(x,y,direction);
-		//	}
-		//}
-
 	}
+		/**	
+		for(x = 0 ; x<3 ; x++) {
+			for (y = size/2; y < size; y++ ) {
+				direction = 6;
+				addCellOutParticle(x,y,direction);
+			}
+		}
+/*
+	
+	
 
 	/**
 	 * Draw the current frame to the console
@@ -278,7 +280,7 @@ public class FluidFrame {
 				else if (ParticleCell.hasDirectionFlag(cel, 3)) dispChar = '\u2192';
 				else if (ParticleCell.hasDirectionFlag(cel, 4)) dispChar = '\u2198';
 				else if (ParticleCell.hasDirectionFlag(cel, 5)) dispChar = '\u2199';
-				//else if (ParticleCell.hasDirectionFlag(cel, 6)) dispChar = '6';
+				//else if (ParticleCell.hasDirectionFlag(cel, 6)) dispChar = '/u2190';
 				else dispChar = '-';
 
 				System.out.print(dispChar + " ");
