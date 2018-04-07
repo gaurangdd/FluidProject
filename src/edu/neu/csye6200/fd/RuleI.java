@@ -8,7 +8,11 @@ public interface RuleI {
 
 	public FluidFrame createNextFrame(FluidFrame inFrame);
 	public int createNextCell(int x, int y, int inVal);
-	public int createval(int x, int y, int inVal,int a);
+	public int createval(int x, int y, int inVal);
+	
+	
+	
+	public FluidFrame ruleselected(FluidFrame inFrame);
 	
 }
 

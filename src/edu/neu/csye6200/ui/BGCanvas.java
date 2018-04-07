@@ -3,6 +3,10 @@ package edu.neu.csye6200.ui;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.logging.Logger;
+
+import static edu.neu.csye6200.ui.WolfApp.genNum;
+import static edu.neu.csye6200.ui.WolfApp.no;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -22,14 +26,16 @@ public class BGCanvas extends JPanel implements Observer {
 	private Logger log = Logger.getLogger(BGCanvas.class.getName());
     private int lineSize = 20;
     private Color col = null;
+    public double num=no;
+    public int gnum = genNum;
     private long counter = 0L;
-	private FluidFrameAvg ffa = new FluidFrameAvg(lineSize);
+	private FluidFrameAvg ffa = null;
 	
     /**
      * CellAutCanvas constructor
      */
 	public BGCanvas() {
-		col = Color.WHITE;
+		col = Color.BLACK;
 		
 	}
 
@@ -47,7 +53,9 @@ public class BGCanvas extends JPanel implements Observer {
 	/**
 	 * Draw the CA graphics panel
 	 * @param g
+	 * 
 	 */
+	 
 	public void drawBG(Graphics g) {
 		log.info("Drawing BG " + counter++);
 		Graphics2D g2d = (Graphics2D) g;
@@ -94,11 +102,11 @@ public class BGCanvas extends JPanel implements Observer {
 		Graphics2D g2d = (Graphics2D) g;
 		Dimension size = getSize();
 		
-		g2d.setColor(Color.BLACK);
+		g2d.setColor(Color.GRAY);
 		g2d.fillRect(0, 0, size.width, size.height);
 		
-		g2d.setColor(Color.RED);
-		g2d.drawString("BG 2D", 10, 15);
+		//g2d.setColor(Color.BLUE);
+		//g2d.drawString("FD 2D", 10, 15);
 		
 		int maxRows = size.height / lineSize;
 		int maxCols = size.width / lineSize;
@@ -109,25 +117,29 @@ public class BGCanvas extends JPanel implements Observer {
 		
 		for (int j = 0; j < maxRows; j++) {
 			for (int i = 0 ; i < maxCols ; i++) {
-				int redVal = validColor(i*5);
-				   int greenVal = validColor(255-j*5);
-				   int blueVal = validColor((j*5)-(i*2));
+				int redVal = validColor(i*10);
+				   int greenVal = validColor(255-j*10);
+				   int blueVal = validColor((j*10)-(i*12));
 				   
-				   double dirVal = ffa.getAvgDirection();
-				   double magVal = ffa.getAvgMagnitude();
+				   double dirVal = ffa.AvgDirection(j,i);
+				   double magVal = ffa.AvgMagnitude(j,i);
 				   
 				   System.out.println(">"+dirVal);
 				   
 				   col = new Color(redVal, greenVal, blueVal);
+				   
 				// Draw box, one pixel less to create a black outline
+				   
 				   int startx = i*lineSize;
 				   int starty = j*lineSize;
-				   int endx = startx + 15;
-				   int endy = starty + 15;
+				   magVal = 1.0;
+				   int endx = startx + (int) (magVal + 15.0 * Math.sin(dirVal));
+				   int endy = starty + (int) (magVal + 15.0 * Math.cos(dirVal));
 				   paintLine( g2d, startx, starty, endx, endy, col); 
 				   
 			}
 			System.out.println();
+			
 		}
 	}
 	
@@ -151,9 +163,12 @@ public class BGCanvas extends JPanel implements Observer {
 		System.out.println("Received an update");
 		
 		if (arg instanceof FluidFrameAvg) {
-			this.ffa = (FluidFrameAvg)arg;
+			this.ffa = (FluidFrameAvg )arg;
 			this.repaint();
+			repaint();
 		}
+			
+		
 		
 		
 	}

@@ -80,7 +80,57 @@ case 2: return 5;
 case 3: return 0;
 case 4: return 1;
 case 5: return 2;
+//case 6: return 6;
 }
+}
+
+public static int deflected(int direction, boolean edge) {
+	if(edge) {
+		switch(direction){
+			default:
+			case 0: return 0;
+			case 1: return 2;
+			case 2: return 1;
+			case 3: return 3;
+			case 4: return 5;
+			case 5: return 4;
+				
+		}
+	}
+	else {
+		switch(direction) {
+		default:
+		case 0: return 0;
+		case 1: return 2;
+		case 2: return 1;
+		case 3: return 3;
+		case 4: return 5;
+		case 5: return 4;
+		}
+	}
+}
+
+public static int getNewDirection(int inVal) {
+	switch (inVal) {
+	default: return inVal;
+	case 18: return 9;
+	case 19: return 37;
+	case 37: return 19;
+	case 54: return 27;
+	case 21: return 42;
+	}
+}
+
+public static int ruleselected1(int direction) {
+	switch (direction) {
+	default: 
+	case 0: return 0;
+	case 1: return 0;
+	case 2: return 0;
+	case 3: return 3;
+	case 4: return 3;
+	case 5: return 3;
+	}
 }
 
 }

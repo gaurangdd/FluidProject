@@ -96,14 +96,16 @@ public class FluidFrame {
 		// Add this to our value
 		// return the summarized result
 		int inVal = 0;
+		
 		// Walk through each direction
 		for (int dir = 0; dir < 6; dir++) {
 			// Get the cell in a given direction from our current cell
 			if(x-1<0 || y-1<0 || x+1>=size || y+1>=size ){                            
 
 				if(ParticleCell.hasDirectionFlag(getCellOutValue(x,y), dir) && isPointingOutside(x,y,dir)){
+					boolean edge = onEdge(x,y,dir);
 
-					inVal = ParticleCell.setFlag(inVal, dir);
+					inVal = ParticleCell.setFlag(inVal, ParticleCell.deflected(dir, edge) );
 
 				}
 
@@ -214,6 +216,25 @@ public class FluidFrame {
 		}
 
 	}
+	
+	public boolean onEdge(int x, int y, int direction) {
+		if((y & 1) == 0 ) {
+			if((x+1>=size && y-1<0 || x+1<0 && y+1>=size) && (direction ==2 || direction == 4))
+				return false;
+			else
+				return true;
+		}
+		
+		
+		else {
+			if((x+1>=size && y-1<0 || x-1<0 && y+1>=size) && (direction ==1 || direction == 5))
+				return false;
+			else if(x+1>=size)
+				return false;
+			else 
+				return true;
+		}
+	}
 
 	/**
 	 * Fill up the current frame up a a specified percentage (i.e. 100% yields an average of one particle direction per cell)
@@ -250,16 +271,16 @@ public class FluidFrame {
 
 		// Add the CellOutParticle
 		addCellOutParticle(x,y,direction); // add it, or if the particle already exists, just overlay it
-	}
-		/**	
+	
+			
 		for(x = 0 ; x<3 ; x++) {
 			for (y = size/2; y < size; y++ ) {
 				direction = 6;
 				addCellOutParticle(x,y,direction);
 			}
 		}
-/*
-	
+
+	}
 	
 
 	/**
@@ -280,7 +301,7 @@ public class FluidFrame {
 				else if (ParticleCell.hasDirectionFlag(cel, 3)) dispChar = '\u2192';
 				else if (ParticleCell.hasDirectionFlag(cel, 4)) dispChar = '\u2198';
 				else if (ParticleCell.hasDirectionFlag(cel, 5)) dispChar = '\u2199';
-				//else if (ParticleCell.hasDirectionFlag(cel, 6)) dispChar = '/u2190';
+				//else if (ParticleCell.hasDirectionFlag(cel, 6)) dispChar = '|';
 				else dispChar = '-';
 
 				System.out.print(dispChar + " ");
@@ -333,7 +354,7 @@ public void CalcAvgRegion(int yBegin, int xBegin , int stepsize) {
 		double avgx = Sumx / divisor;
 		double avgy = Sumy / divisor;
 		
-		avgMagnitude = Math.sqrt(avgx * avgx + avgx * avgx);
+		avgMagnitude = Math.sqrt(avgx * avgx + avgy * avgy);
 		avgDirection = Math.atan(avgx/avgy);
 }
 		

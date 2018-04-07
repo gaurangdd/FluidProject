@@ -10,19 +10,30 @@ import edu.neu.csye6200.fd.FluidFrameSim;
 import edu.neu.csye6200.fd.RuleI;
 import edu.neu.csye6200.ui.BGCanvas;
 
+import static edu.neu.csye6200.ui.WolfApp.pauseValue;
+import static edu.neu.csye6200.ui.WolfApp.stopValue;
+import static edu.neu.csye6200.ui.WolfApp.genNum;
+import static edu.neu.csye6200.ui.WolfApp.pauseValue;
+import static edu.neu.csye6200.ui.WolfApp.stopValue;
+import static edu.neu.csye6200.ui.WolfApp.rule1;
+
+
 public class FluidFrameSim extends Observable implements Runnable {
 	
 	private boolean done = false; // Set true to exit (i.e. stop) the simulation
 	private boolean paused = false; // Set true to pause the simulation
 	private boolean running = false;
 	
-	private int MAX_FRAME_SIZE = 16; // How big is the simulation frame
-	private int MAX_GENERATION = 5; // How many generations will we calculate before we're through?
+	private int MAX_FRAME_SIZE = 128; // How big is the simulation frame
+	private int MAX_GENERATION = genNum; // How many generations will we calculate before we're through?
 	private int genCount = 0; // the count of the most recent generation
 
 	private FluidFrame currentFrame = null;
-	private FluidFrameAvg avgFrame = null;
+	private FluidFrameAvg avgFrame;
+	
 	private RuleI rule = null;
+	//private RuleI ruleselected = null;
+	int c = 0;
 	
 	
 	
@@ -36,37 +47,64 @@ public class FluidFrameSim extends Observable implements Runnable {
 		rule = new BasicRule();
 	}
 	
+	
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
 		running = true;
 		System.out.println("FluidFrame: 0" );
+		System.out.println(MAX_GENERATION);
 		currentFrame.drawFrameToConsole();
+		
 		
 		while(!done) {
 			
-			if (!paused) {
+			
+			if (paused) {
+				
+				try {
+		               wait();	// Thread sleeps (i.e do no work)
+		           } catch (InterruptedException e) {
+	   }
+				
+				
+				
+				notifyAll();
+			}
+			if (!paused && !pauseValue) { //start
+				
+				MAX_GENERATION = genNum;
 				runSim();
-				sleep(3000L);
+				sleep(30L);
 			}
-			else {
-				sleep(5000L);
-			}
+			
+			 if(stopValue) {
+				 try {
+		               Thread.sleep(1000000);
+		               // Thread sleeps (i.e do no work)
+		           } catch (InterruptedException e) {
+      	   }
+				 
+				 
+			 }
+					
 			if (genCount > MAX_GENERATION) done = true;
 		}
-		running = false;
+		//running = false;
 		
 	}
 
 	public void runSim() {
-		
-		
-		
+		if(rule1 == 1) {
 		
 			
+			FluidFrame nextFrame = rule.ruleselected(currentFrame);
+			
+		
 			// Move target if needed
 			
-			FluidFrame nextFrame = rule.createNextFrame(currentFrame);
+			//FluidFrame nextFrame = rule.createNextFrame(currentFrame);
 			
 			// Average the results to create a lower-res display frame
 			
@@ -75,7 +113,7 @@ public class FluidFrameSim extends Observable implements Runnable {
 			
 			// Advertise that we have a display displayable average FluidFrame and let it be drawn
 			setChanged();
-			notifyObservers(nextFrame);
+			notifyObservers(avgFrame);
 			
 			
 			genCount++; // Keep track of how many frames have been calculated
@@ -83,7 +121,33 @@ public class FluidFrameSim extends Observable implements Runnable {
 			nextFrame.drawFrameToConsole();
 			
 			currentFrame = nextFrame;
-
+		}
+		
+		else if (rule1 == 2)
+		{
+			FluidFrame nextFrame = rule.createNextFrame(currentFrame);
+			
+			
+			// Move target if needed
+			
+			//FluidFrame nextFrame = rule.createNextFrame(currentFrame);
+			
+			// Average the results to create a lower-res display frame
+			
+			// Store the low-res picture and make it available for display
+			avgFrame.setFluidFrame(nextFrame);
+			
+			// Advertise that we have a display displayable average FluidFrame and let it be drawn
+			setChanged();
+			notifyObservers(avgFrame);
+			
+			
+			genCount++; // Keep track of how many frames have been calculated
+			System.out.println("\nFluidFrame: " + genCount);
+			nextFrame.drawFrameToConsole();
+			
+			currentFrame = nextFrame;
+		}
 			
 		
 		
@@ -118,8 +182,30 @@ public class FluidFrameSim extends Observable implements Runnable {
 		
 	}
 	
+	
+	
 	public boolean isRunning() {
 		return running;
+	}
+
+	public boolean isPaused() {
+		return running;
+	}
+
+	public boolean isDone() {
+		return done;
+	}
+
+	public void setDone(boolean done) {
+		this.done = done;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+
+	public void setRunning(boolean running) {
+		this.running = running;
 	}
 
 }
