@@ -173,7 +173,7 @@ public class MenuManager implements ActionListener {
 	 * @return the generated JMenu instance
 	 */
 	public JMenu createMenu(JMenuBar mBar, String menuPath, String menuName, char menuMnemonic, String desc, int pos) {
-		//System.out.println("MenuManager:: Adding menu bar - " + menuPath + "/" + menuName);
+
 
 		String fullMenuPath = menuPath;
 		if (menuPath.length() == 0)
@@ -191,6 +191,7 @@ public class MenuManager implements ActionListener {
 		menu.getAccessibleContext().setAccessibleDescription(desc);
 
 		// Add this menu to a Hashtable
+
 		buttonMap.put(fullMenuPath, menu);
 
 		if (pos < 0)
@@ -228,7 +229,7 @@ public class MenuManager implements ActionListener {
 	 */
 	public JMenuItem createMenuItem(String menuPath, String label, int mnemonic, 
 			String accessibleDescription, ActionListener action) {
-		//System.out.println("MenuManager:: Adding menu item - path: " + menuPath + " label: " + label);
+
 		JMenu menu = (JMenu) buttonMap.get(menuPath);
 		if (menu == null){
 			System.err.println("MenuManager:: Unable to locate a menu with path: " + menuPath);
@@ -245,7 +246,7 @@ public class MenuManager implements ActionListener {
 	 */
 	public JMenuItem createMenuItem(final JMenu menu, final String label, final int mnemonic,
 			final String accessibleDescription,final ActionListener action) {
-		//System.out.println("MenuManager:: Adding menu item - " + label);
+
 
 		String buttonPath = menu.getName() + "." + label;
 		buttonMap.put(buttonPath, menu);
@@ -315,17 +316,17 @@ public class MenuManager implements ActionListener {
 	 */
 	public JMenuItem createMenuItem(JMenu menu, String label, int keyevent, int modifier,
 			String accessibleDescription, ActionListener action, int pos) {
-		//System.out.println("MenuManager:: Adding menu item - " + label);
+
 
 		JMenuItem mi;
-		if (pos < 0) // just add the menu item
+		if (pos < 0) //  Add the menu item
 			mi = (JMenuItem) menu.add(new JMenuItem(label));
 		else
 			mi = (JMenuItem) menu.insert(new JMenuItem(label),pos);
 
 		if (keyevent != 0) {
 			mi.setAccelerator(KeyStroke.getKeyStroke(keyevent, modifier));
-			//KeyEvent.VK_N, ActionEvent.ALT_MASK + ActionEvent.SHIFT_MASK));
+
 		}
 		mi.getAccessibleContext().setAccessibleDescription(
 				accessibleDescription);
@@ -425,7 +426,7 @@ public class MenuManager implements ActionListener {
 
 	/**
 	 * A Default About action for the MenuManager
-	 * @author MMUNSON
+	 *
 	 *
 	 */
 	class AboutAction extends AbstractAction {

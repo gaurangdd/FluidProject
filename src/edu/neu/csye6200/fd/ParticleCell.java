@@ -11,7 +11,7 @@ public static final int DIR_2 = 0b000100; //  4 - Up/Right vector
 public static final int DIR_3 = 0b001000; //  8 - Right vector
 public static final int DIR_4 = 0b010000; // 16 - Down/Right vector
 public static final int DIR_5 = 0b100000; // 32 - Down/Left vector
-public static final int DIR_6 = 0b1000000; //64
+
 
 /**
 * Determine if a cellValue has a particle moving in a particular direction
@@ -29,7 +29,7 @@ case 2: return ((cellVal & DIR_2) > 0);
 case 3: return ((cellVal & DIR_3) > 0);
 case 4: return ((cellVal & DIR_4) > 0);
 case 5: return ((cellVal & DIR_5) > 0);
-case 6: return ((cellVal & DIR_6) > 0);
+
 }
 }
 
@@ -49,7 +49,7 @@ case 2: cellVal = setDirectionFlag(cellVal, DIR_2); break;
 case 3: cellVal = setDirectionFlag(cellVal, DIR_3); break;
 case 4: cellVal = setDirectionFlag(cellVal, DIR_4); break;
 case 5: cellVal = setDirectionFlag(cellVal, DIR_5); break;
-case 6: cellVal = setDirectionFlag(cellVal, DIR_6); break;
+
 }
 return cellVal;
 }
@@ -61,7 +61,7 @@ return cellVal;
 * @return the current cell with a new particle overlay
 */
 public static int setDirectionFlag(int cellVal, int directionFlag) {
-	if (directionFlag == 64) return directionFlag;
+	
 cellVal |= directionFlag; // Turn on the corresponding bits
 return cellVal; // return the result
 }
@@ -80,7 +80,7 @@ case 2: return 5;
 case 3: return 0;
 case 4: return 1;
 case 5: return 2;
-//case 6: return 6;
+
 }
 }
 
@@ -88,10 +88,10 @@ public static int deflected(int direction, boolean edge) {
 	if(edge) {
 		switch(direction){
 			default:
-			case 0: return 0;
+			case 0: return 3;
 			case 1: return 2;
 			case 2: return 1;
-			case 3: return 3;
+			case 3: return 0;
 			case 4: return 5;
 			case 5: return 4;
 				
@@ -113,26 +113,51 @@ public static int deflected(int direction, boolean edge) {
 public static int getNewDirection(int inVal) {
 	switch (inVal) {
 	default: return inVal;
-	case 18: return 9;
+	case 18: return  9;
 	case 19: return 37;
 	case 37: return 19;
 	case 54: return 27;
 	case 21: return 42;
+  	case 26: return 37;
+	case 44: return 19;
+	case 42: return 50;
+	case 63: return 63;
+	case 35: return 21;
+	case 50: return 44;
+	case 36: return 10;
+	case 9:  return 40;
+	case 17: return  9;
+	case 57: return 15;
+	case 33: return 12;
+	case 6:  return 48;
+	case 48: return  6;
+	case 12: return 33;
+	case 20: return 33;
 	}
 }
 
-public static int ruleselected1(int direction) {
+//rule 2
+public static int ruleselected2(int direction) {
 	switch (direction) {
 	default: 
-	case 0: return 0;
-	case 1: return 0;
-	case 2: return 0;
+	case 0: return 2;
+	case 1: return 2;
+	case 2: return 2;
 	case 3: return 3;
 	case 4: return 3;
 	case 5: return 3;
 	}
 }
 
+//rule 3
+public static int ruleselected3(int dir) {
+	if (dir < 32  ) 
+		return 5;
+
+	return dir;
+	}
 }
+
+
 
 

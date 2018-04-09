@@ -6,7 +6,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.logging.Logger;
 
@@ -31,22 +30,25 @@ public class WolfApp extends FDApp {
 	protected JPanel northPanel;
 
 	public static JTextField txtGenerationNum = null;
+	
 	public JComboBox<String> combo = null;
 	private JLabel label1 = null;
 	public static int genNum = 0;
 	public static double no = 0;
-	//protected JComboBox combo = null;
-	public static int rule1 = 0;
+
+	public static int Myrule = 0;
 	protected static JButton startBtn = null;
 	protected static JButton stopBtn = null;
 	protected static JButton pauseBtn = null;
 
 	public static boolean stopValue = false;
-    public static boolean pauseValue = false;
+	public static boolean pauseValue = false;
 
 	
 	FluidFrameSim sim = null;
-	
+	private Thread thread = new Thread();
+	FDApp FD = null;
+	private FDApp application;
 
 
 	/**
@@ -60,7 +62,7 @@ public class WolfApp extends FDApp {
 		menuMgr.createDefaultActions(); // Set up default menu items
 
 		sim = new FluidFrameSim(); 
-		
+
 
 		showUI(); // Cause the Swing Dispatch thread to display the JFrame
 	}
@@ -75,9 +77,6 @@ public class WolfApp extends FDApp {
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(BorderLayout.NORTH, getNorthPanel());
 
-		//bgPanel = new BGCanvas();
-		//mainPanel.add(BorderLayout.CENTER, bgPanel);
-
 		return mainPanel;
 	}
 
@@ -90,10 +89,10 @@ public class WolfApp extends FDApp {
 		northPanel.setLayout(new FlowLayout());
 
 		label1=new JLabel("No Of Generations : ");
-        txtGenerationNum=new  JTextField("10",5);
+		txtGenerationNum=new  JTextField("10",5);
 		northPanel.add(label1);
 		northPanel.add(txtGenerationNum);
-		
+
 		String[] Option ={"Select Rule","Rule 1","Rule 2","Rule 3"};
 		combo=new JComboBox(Option);
 		combo.setPreferredSize(new Dimension(200,27));
@@ -103,17 +102,17 @@ public class WolfApp extends FDApp {
 				comboactionperformed(evt);
 			}
 		});
-	   northPanel.add(combo);
+		northPanel.add(combo);
 
 		startBtn = new JButton("Start");
-		startBtn.addActionListener(this); // Allow the app to hear about button pushes
+		startBtn.addActionListener(this); 	// Allow the app to hear about button pushes
 		northPanel.add(startBtn);
-		
-		pauseBtn = new JButton("Pause");
-    	pauseBtn.addActionListener(this); // Allow the app to hear about button pushes
-    	northPanel.add(pauseBtn);
 
-		stopBtn = new JButton("Stop"); // Allow the app to hear about button pushes
+		pauseBtn = new JButton("Pause");
+		pauseBtn.addActionListener(this); 	// Allow the app to hear about button pushes
+		northPanel.add(pauseBtn);
+
+		stopBtn = new JButton("Stop"); 		// Allow the app to hear about button pushes
 		stopBtn.addActionListener(this);
 		northPanel.add(stopBtn);
 
@@ -122,100 +121,85 @@ public class WolfApp extends FDApp {
 
 
 	public String getTxtGenerationNum(){
-        return txtGenerationNum.getText();
-    }
+		return txtGenerationNum.getText();
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		log.info( ae.getActionCommand());
 		if(ae.getActionCommand().equals("Start")) {
+
+
+
 			genNum = parseInt(txtGenerationNum.getText());
-			//System.out.println(genNum);
-			
-			//if(sim.isRunning()) return;
+
 			System.out.println("Start pressed");
 			stopValue = false;
-	       	pauseValue = false;
-			//sim.setRunning(true);
+			pauseValue = false;
+
 			sim.setDone(false);
-			//sim.setPaused(false);
-			//sim.setRunning(true);
-	       	//rule = combo.getSelectedIndex();
-	       	//sim.initGen(rule);
-	       	
-	        BGCanvas bgPanel = new BGCanvas();
-	        bgPanel = new BGCanvas();
-			sim.addObserver(bgPanel);
-			mainPanel.add(BorderLayout.CENTER, bgPanel);
-			frame.setVisible(true);
-	        
-			
-	        
-	       	
-	       	
-			
-	       	System.out.println("Strating a thread");
-	       	Runnable r = sim; 
-            Thread t = new Thread(r); //Thread 
-            t.start();
-            //sim.setRunning(true);
-            
+			BGCanvas FDPanel = new BGCanvas();
+			FDPanel = new BGCanvas();
+			sim.addObserver(FDPanel);
+			mainPanel.add(BorderLayout.CENTER, FDPanel);  // Adds canvas at the center
+			frame.setVisible(true);		//Making it visible
+
+			thread = new Thread (sim);	//Thread 
+
+			System.out.println("Strating a thread");
+			thread.start();
+
+
 		}
-		
-		
-		
+
+
+
+
 		if (ae.getActionCommand().equals("Stop")) {
-			
+
 			System.out.println("Stop pressed");
-			//sim.setDone(true);
+
+			thread.stop();
 			stopValue = true;
-			//sim.setRunning(false);
+			sim.setDone(true);
+			exit();
 			
 			
+
 		}
 		if (ae.getActionCommand().equals("Pause")) {
-			//if(!sim.isRunning())return;
-			//sim.setPaused(true);
+
 			pauseValue = true;
-			
+
 			System.out.println("Pause pressed");
+
 		}
-		
-		
-	}
+
+	}	
+
+	public void comboactionperformed(ActionEvent e){
+
+		JComboBox combo = (JComboBox)e.getSource();
+		String Name = (String)combo.getSelectedItem();
+
 	
-	/**
-		log.info("We received an ActionEvent " + ae);
-		if (ae.getSource() == startBtn)
-			System.out.println("Start pressed");
-		else if (ae.getSource() == stopBtn)
-			System.out.println("Stop pressed");
+		if(Name=="Rule 1")
+		{Myrule = 1;
+		System.out.println("Rule 1 is selected");}
+
+		else if(Name=="Rule 2")
+		{Myrule = 2;
+		System.out.println("Rule 2 is selected");}
+
+		else if(Name=="Rule 3")
+		{
+			Myrule = 3;
+			System.out.println("Rule 3 is selected");
+			}
+
 	}
 
-*/
-	public void comboactionperformed(ActionEvent e){
-    	
-    	JComboBox combo = (JComboBox)e.getSource();
-        String Name = (String)combo.getSelectedItem();
-     
-        double i=0;
-        
-          if(Name=="Rule 1")
-        {rule1 = 1;
-        	  System.out.println("Rule 1 is selected");}
-         
-          else if(Name=="Rule 2")
-        {rule1 = 2;
-        	  System.out.println("Rule 2 is selected");}
-       
-        else if(Name=="Rule 3")
-        {
-        	rule1 = 3;
-        	System.out.println("Rule 3 is selected");}
-      
-    }
-	
-	
+
 	@Override
 	public void windowOpened(WindowEvent e) {
 		log.info("Window opened");

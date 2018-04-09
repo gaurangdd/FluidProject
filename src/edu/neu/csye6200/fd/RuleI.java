@@ -6,13 +6,15 @@ import edu.neu.csye6200.fd.FluidFrame;
 
 public interface RuleI {
 
-	public FluidFrame createNextFrame(FluidFrame inFrame);
-	public int createNextCell(int x, int y, int inVal);
-	public int createval(int x, int y, int inVal);
+	
+	
+	public FluidFrame createNextFrame(FluidFrame inFrame,int Myrule);
+	public int createNextCell(int x, int y, int inVal,int Myrule);
+	public int createval(int x, int y, int inVal,int Myrule);
 	
 	
 	
-	public FluidFrame ruleselected(FluidFrame inFrame);
+	
 	
 }
 

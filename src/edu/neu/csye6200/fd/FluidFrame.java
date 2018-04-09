@@ -39,12 +39,6 @@ public class FluidFrame {
 	 * @return a FluidCell integer value
 	 */
 	public int getCellOutValue(int x, int y) {
-		//if (x < 0) x = 0;
-		//if (x >= size) x = size-1;
-		//if (y < 0) y = 0;
-		//if (y >= size) y = size-1;
-
-		//return frame[x][y];
 
 		if(x>=0 && x<size && y>=0 && y<size){
 
@@ -96,7 +90,7 @@ public class FluidFrame {
 		// Add this to our value
 		// return the summarized result
 		int inVal = 0;
-		
+
 		// Walk through each direction
 		for (int dir = 0; dir < 6; dir++) {
 			// Get the cell in a given direction from our current cell
@@ -111,7 +105,7 @@ public class FluidFrame {
 
 			}
 
-			
+
 			//Does it have a particle in the opposite direction?
 			// Get the cell in a given direction from our current cell
 
@@ -154,39 +148,37 @@ public class FluidFrame {
 			switch (direction) {
 			default:
 			case 0: return (getCellOutValue(x-1, y));   // Left
-			
 			case 1: return (getCellOutValue(x, y-1)); // UL
-			
 			case 2: return (getCellOutValue(x+1, y-1)); // UR
-			
 			case 3: return (getCellOutValue(x+1, y));   // Right
-				
 			case 4: return (getCellOutValue(x+1, y+1)); // LR
-			
 			case 5: return (getCellOutValue(x, y+1));   // LL	
-
 			}
 		}
 	}
+
+	/**
+	 * isPointingOutside returns a boolean (true/false)
+	 * It gives the indication of whether the cell is on
+	 * the edge(boundary).
+	 *	
+	 * @param x
+	 * @param y
+	 * @param direction
+	 * @return
+	 */
 
 	private boolean isPointingOutside(int x, int y, int direction){
 
 		if ((y & 1) == 0) { // y is even
 
 			switch (direction) {
-
 			default:
-
 			case 0: return (x-1<0);   // Left
-
 			case 1: return (x-1<0 || y-1<0); // UL
-
 			case 2: return (y-1<0); // UR
-
 			case 3: return (x+1>=size);   // Right
-
 			case 4: return (y+1>=size); // LR
-
 			case 5: return (x-1<0 || y+1 >= size);// LL	
 
 			}
@@ -196,37 +188,30 @@ public class FluidFrame {
 		else { // y is odd
 
 			switch (direction) {
-
 			default:
-
 			case 0: return (x-1<0);   // Left
-
 			case 1: return (y-1<0); // UL
-
 			case 2: return (x+1>=size || y-1<0); // UR
-
 			case 3: return (x+1>=size);   // Right
-
 			case 4: return (x+1>=size || y+1>=size); // LR
-
 			case 5: return (y+1>=size);  // LL	
-
 			}
 
 		}
 
 	}
-	
+
+	// This method checks if the current cell is an edge cells
 	public boolean onEdge(int x, int y, int direction) {
-		if((y & 1) == 0 ) {
+		if((y & 1) == 0 ) { //even
 			if((x+1>=size && y-1<0 || x+1<0 && y+1>=size) && (direction ==2 || direction == 4))
 				return false;
 			else
 				return true;
 		}
-		
-		
-		else {
+
+
+		else { //odd
 			if((x+1>=size && y-1<0 || x-1<0 && y+1>=size) && (direction ==1 || direction == 5))
 				return false;
 			else if(x+1>=size)
@@ -258,21 +243,18 @@ public class FluidFrame {
 		double maxSize = size + .99; // Well want a range from 0.00 to size.99. When integerized we'll get 0, 1, 2, ... size
 		// Create a random X
 		int x = (int) (Math.random() * maxSize);
-		int y = (int) (Math.random() * maxSize);
-		//System.out.println(Math.random());
+
 		// Create a random y
+		int y = (int) (Math.random() * maxSize);
+
 		// Create a random direction
 		int direction = (int) (Math.random() * 6.99);
-		//direction = 3; // Test - force all particle to move right
-		
-		
-		
-		
+
 
 		// Add the CellOutParticle
 		addCellOutParticle(x,y,direction); // add it, or if the particle already exists, just overlay it
-	
-			
+
+
 		for(x = 0 ; x<3 ; x++) {
 			for (y = size/2; y < size; y++ ) {
 				direction = 6;
@@ -281,7 +263,7 @@ public class FluidFrame {
 		}
 
 	}
-	
+
 
 	/**
 	 * Draw the current frame to the console
@@ -301,7 +283,6 @@ public class FluidFrame {
 				else if (ParticleCell.hasDirectionFlag(cel, 3)) dispChar = '\u2192';
 				else if (ParticleCell.hasDirectionFlag(cel, 4)) dispChar = '\u2198';
 				else if (ParticleCell.hasDirectionFlag(cel, 5)) dispChar = '\u2199';
-				//else if (ParticleCell.hasDirectionFlag(cel, 6)) dispChar = '|';
 				else dispChar = '-';
 
 				System.out.print(dispChar + " ");
@@ -309,18 +290,20 @@ public class FluidFrame {
 			System.out.println(""); // Carriage return
 		}
 	}
-	
+
 	private double avgDirection;
 	private double avgMagnitude;
-	
-public void CalcAvgRegion(int yBegin, int xBegin , int stepsize) {
-		
+
+	//Method for calculation of average values of direction and magnitude
+
+	public void CalcAvgRegion(int yBegin, int xBegin , int stepsize) {
+
 		double Sumx = 0.0;
 		double Sumy = 0.0;
-		
+
 		int xEnd = xBegin + stepsize;
 		int yEnd = yBegin + stepsize;
-		
+
 		for (int y=yBegin ; y<yEnd ; y++) {
 			for (int x=xBegin ; x<xEnd ; x++) {
 				int cellval = getCellInValue(x,y);
@@ -348,23 +331,23 @@ public void CalcAvgRegion(int yBegin, int xBegin , int stepsize) {
 				}
 			}
 		}
-		
+
 		double divisor = stepsize * stepsize * 3.0;
-		
+
 		double avgx = Sumx / divisor;
 		double avgy = Sumy / divisor;
-		
+
 		avgMagnitude = Math.sqrt(avgx * avgx + avgy * avgy);
 		avgDirection = Math.atan(avgx/avgy);
-}
-		
-		public double getAvgDirection() {
-			return avgDirection;
-		}
-	
-		public double getAvgMagnitude() {
-			return avgMagnitude;
-		}
+	}
+
+	public double getAvgDirection() {
+		return avgDirection;
+	}
+
+	public double getAvgMagnitude() {
+		return avgMagnitude;
+	}
 
 
 }
